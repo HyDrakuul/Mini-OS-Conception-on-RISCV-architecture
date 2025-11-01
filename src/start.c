@@ -1,11 +1,12 @@
 #include <inttypes.h>
 #include <stdio.h>
 #include <cpu.h>
+#include "console.h"
 
 /* on peut s'entrainer a utiliser GDB avec ce code de base */
 /* par exemple afficher les valeurs de n et res avec la commande display */
 /* une fonction bien connue */
-uint32_t fact(uint32_t n)
+/*uint32_t fact(uint32_t n)
 {
     uint32_t res;
     if (n <= 1) {
@@ -14,14 +15,23 @@ uint32_t fact(uint32_t n)
         res = fact(n - 1) * n;
     }
     return res;
-}
+}*/
 
 void kernel_start(void)
 {
 
-    uint32_t x = fact(5);
+   
     /* quand on saura gerer l'ecran, on pourra afficher x */
-    (void)x;
+    init_uart();
+    
+    printf("> Test [printf UART] (1/1)\n");
+    init_ecran();
+    if(init_ecran()==1){printf("Bonne config");}
+    printf("Truc\nSalut\n1\t2\t3\nAB\bC\nBEEF\rRABBIT");
+    for (int i=0;i<20;i++) {printf("%d\n",i);}
+    printf("Hello\n");
+    printf("\f");
+    
     /* on ne doit jamais sortir de kernel_start */
     while (1) {
         /* cette fonction arrete le processeur */
