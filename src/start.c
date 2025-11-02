@@ -30,8 +30,9 @@ void kernel_start(void)
     else if (init_ecran()==2){  printf("Mauvaise config\n");}
     else if (init_ecran()==0){printf("Bonne config\n");}
     printf("Truc\nSalut\n1\t2\t3\nAB\bC\nBEEF\rRABBIT");
-    for (int i=0;i<101;i++) {printf("%d\n",i);}
+    for (int i=0;i<121;i++) {printf("%d\n",i);}
     printf("Hello\n");
+    printf("FIN\n");
     
     
    
