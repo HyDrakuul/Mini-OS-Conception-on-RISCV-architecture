@@ -5,7 +5,7 @@
 
 #define LONGUEUR_CAR 8
 #define HAUTEUR_CAR 8
-#define COULEUR_BASE 0xFF
+#define COULEUR_BASE 0xFFFFFFFF
 #define NB_COLONNE_CAR (DISPLAY_WIDTH/LONGUEUR_CAR)
 #define NB_LIGNE_CAR (DISPLAY_HEIGHT/HAUTEUR_CAR)
 static uint32_t col_curseur =0;
@@ -27,19 +27,42 @@ void traite_car_uart(char car){
 
 }
 uint64_t init_ecran(void){
-    uint16_t type_ecran = *(volatile uint16_t*)(BOCHS_CONFIG_BASE_ADDRESS + 0x500 +VBE_DISPI_INDEX_ID);
-    if (((type_ecran)>>4) != 0xb0c) {
+    //config PCIe
+    int good_device =-1;
+    uint16_t vendor_id, device_id;
+    for(int device = 0; device<32; device++){
+        uint32_t adresse = PCI_ECAM_BASE_ADDRESS +(device<<11);
+        vendor_id = *((volatile uint32_t *)adresse)& 0xffff;
+        device_id = (*((volatile uint32_t *)adresse)>>16)&0xffff;
+        if(vendor_id ==0x1234  && device_id ==0x1111){
+            good_device =device;
+            break;
+      
+        }
+
+    }
+    if(good_device==-1){
         return 1;
     }
-    *(volatile uint16_t *)(BOCHS_CONFIG_BASE_ADDRESS + 0x500 + VBE_DISPI_INDEX_ENABLE ) = 0x0000; 
-    *(volatile uint16_t *)(BOCHS_CONFIG_BASE_ADDRESS + 0x500 + VBE_DISPI_INDEX_XRES) = 0x0400;
-    *(volatile uint16_t *)(BOCHS_CONFIG_BASE_ADDRESS + 0x500 + VBE_DISPI_INDEX_YRES) = 0x0300;
-    *(volatile uint16_t *)(BOCHS_CONFIG_BASE_ADDRESS + 0x500 + VBE_DISPI_INDEX_BPP  ) = 0x0020;
-    *(volatile uint16_t *)(BOCHS_CONFIG_BASE_ADDRESS + 0x500 + VBE_DISPI_INDEX_X_OFFSET   ) = 0x0000;
+    
+    *(volatile uint32_t*)(PCI_ECAM_BASE_ADDRESS + (good_device<<11) + 0x04)|=0b111;
+    *(volatile uint32_t*)(PCI_ECAM_BASE_ADDRESS + (good_device<<11) + 0x10)=BOCHS_DISPLAY_BASE_ADDRESS;
+    *(volatile uint32_t*)(PCI_ECAM_BASE_ADDRESS + (good_device<<11) + 0x18)=BOCHS_CONFIG_BASE_ADDRESS;
+    
+    //config écran
+    uint16_t type_ecran = *(volatile uint16_t*)(BOCHS_CONFIG_BASE_ADDRESS + 0x500 +VBE_DISPI_INDEX_ID*2);
+    if (((type_ecran)>>4) != 0xb0c) {
+        return 2;
+    }
+    *(volatile uint16_t *)(BOCHS_CONFIG_BASE_ADDRESS + 0x500 + VBE_DISPI_INDEX_ENABLE*2 ) = 0x0000; 
+    *(volatile uint16_t *)(BOCHS_CONFIG_BASE_ADDRESS + 0x500 + VBE_DISPI_INDEX_XRES*2) = 0x0400;
+    *(volatile uint16_t *)(BOCHS_CONFIG_BASE_ADDRESS + 0x500 + VBE_DISPI_INDEX_YRES*2) = 0x0300;
+    *(volatile uint16_t *)(BOCHS_CONFIG_BASE_ADDRESS + 0x500 + VBE_DISPI_INDEX_BPP*2  ) = 0x0020;
+    *(volatile uint16_t *)(BOCHS_CONFIG_BASE_ADDRESS + 0x500 + VBE_DISPI_INDEX_X_OFFSET*2   ) = 0x0000;
 
-    *(volatile uint16_t *)(BOCHS_CONFIG_BASE_ADDRESS + 0x500 + VBE_DISPI_INDEX_Y_OFFSET  ) = 0x0000;
-    *(volatile uint16_t *)(BOCHS_CONFIG_BASE_ADDRESS + 0x500 + VBE_DISPI_INDEX_BANK ) = 0x0000;
-    *(volatile uint16_t *)(BOCHS_CONFIG_BASE_ADDRESS + 0x500 + VBE_DISPI_INDEX_ENABLE ) = 0x41; 
+    *(volatile uint16_t *)(BOCHS_CONFIG_BASE_ADDRESS + 0x500 + VBE_DISPI_INDEX_Y_OFFSET*2  ) = 0x0000;
+    *(volatile uint16_t *)(BOCHS_CONFIG_BASE_ADDRESS + 0x500 + VBE_DISPI_INDEX_BANK*2 ) = 0x0000;
+    *(volatile uint16_t *)(BOCHS_CONFIG_BASE_ADDRESS + 0x500 + VBE_DISPI_INDEX_ENABLE*2 ) = 0x41; 
     return 0;
 
 
@@ -76,7 +99,7 @@ void defilement(void){
     size_t taille_ligne_texte = 8*taille_ligne_ecran;
 
     memmove(origine, origine + taille_ligne_texte, (DISPLAY_HEIGHT*taille_ligne_ecran) - taille_ligne_texte );//pour la source, on se place au début de la 2eme ligne
-    lig_curseur = lig_curseur -1;
+    lig_curseur = NB_LIGNE_CAR-1;
     memset(origine+(DISPLAY_HEIGHT-HAUTEUR_CAR)*taille_ligne_ecran,0,taille_ligne_texte );
 
 
@@ -93,7 +116,7 @@ void ecrit_car(uint32_t lig, uint32_t col, char c, uint32_t couleur){
                 }
             }
         }
-        place_curseur(lig+1, col+1, COULEUR_BASE);
+        place_curseur(lig, col+1, COULEUR_BASE);
         
     
 
@@ -114,20 +137,21 @@ void traite_car(char c){
         
         place_curseur(lig_curseur,col_curseur,0);
         col_curseur+=8;
-        if(col_curseur>=NB_COLONNE_CAR){
+        if (lig_curseur >= NB_LIGNE_CAR){
+            defilement();
+            lig_curseur=NB_LIGNE_CAR-1;
+            place_curseur(lig_curseur, 0,COULEUR_BASE);
+        }
+        else if(col_curseur>=NB_COLONNE_CAR){
             lig_curseur++;
             place_curseur(lig_curseur,0, COULEUR_BASE);
         }
-        else if (lig_curseur >= NB_LIGNE_CAR){
-            defilement();
-            lig_curseur++;
-            place_curseur(lig_curseur, 0,COULEUR_BASE);
-        }
+        
         else{
             
             
     
-            place_curseur(lig_curseur+1,0,COULEUR_BASE);
+            place_curseur(lig_curseur,col_curseur,COULEUR_BASE);
 
         }
 
@@ -136,7 +160,7 @@ void traite_car(char c){
        place_curseur(lig_curseur,col_curseur,0);
        if(lig_curseur>=NB_LIGNE_CAR){
         defilement();
-        lig_curseur++;
+        lig_curseur=NB_LIGNE_CAR-1;
         place_curseur(lig_curseur,0,COULEUR_BASE);
 
        }
