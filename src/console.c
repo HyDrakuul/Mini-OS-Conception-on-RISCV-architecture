@@ -96,11 +96,12 @@ void place_curseur(uint32_t lig, uint32_t col, uint32_t couleur){
 void defilement(void){
     uint8_t *origine = (uint8_t *) BOCHS_DISPLAY_BASE_ADDRESS;
     size_t taille_ligne_ecran = DISPLAY_WIDTH*(DISPLAY_BPP/8);
-    size_t taille_ligne_texte = 8*taille_ligne_ecran;
+    size_t taille_ligne_texte = HAUTEUR_CAR*taille_ligne_ecran;
 
     memmove(origine, origine + taille_ligne_texte, (DISPLAY_HEIGHT*taille_ligne_ecran) - taille_ligne_texte );//pour la source, on se place au début de la 2eme ligne
+    
+    //memset(origine + (NB_LIGNE_CAR - 1) * HAUTEUR_CAR * taille_ligne_ecran,0,taille_ligne_texte );
     lig_curseur = NB_LIGNE_CAR-1;
-    memset(origine+(DISPLAY_HEIGHT-HAUTEUR_CAR)*taille_ligne_ecran,0,taille_ligne_texte );
 
 
 
@@ -126,8 +127,9 @@ void ecrit_car(uint32_t lig, uint32_t col, char c, uint32_t couleur){
 void traite_car(char c){
     if (c=='\b'){
         if(col_curseur > 0){
-            place_curseur(lig_curseur,col_curseur,0);
+            //place_curseur(lig_curseur,col_curseur,0);
             col_curseur--;
+            ecrit_car(lig_curseur,col_curseur,' ',COULEUR_BASE);
             place_curseur(lig_curseur, col_curseur, COULEUR_BASE);
         }
        
