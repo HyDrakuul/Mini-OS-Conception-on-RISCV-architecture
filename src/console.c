@@ -73,6 +73,8 @@ void pixel(uint32_t x, uint32_t y, uint32_t couleur){
 }
 
 void efface_ecran(void){
+    size_t taille_ligne_ecran = DISPLAY_WIDTH*(DISPLAY_BPP/8);
+    size_t taille_ligne_texte = HAUTEUR_CAR*taille_ligne_ecran;
     uint8_t *origine = (uint8_t *) BOCHS_DISPLAY_BASE_ADDRESS;
     memset(origine,0,DISPLAY_SIZE*(DISPLAY_BPP/8));
     lig_curseur=1;
@@ -94,13 +96,15 @@ void place_curseur(uint32_t lig, uint32_t col, uint32_t couleur){
 
 }
 void defilement(void){
-    uint8_t *origine = (uint8_t *) BOCHS_DISPLAY_BASE_ADDRESS;
-    size_t taille_ligne_ecran = DISPLAY_WIDTH*(DISPLAY_BPP/8);
-    size_t taille_ligne_texte = HAUTEUR_CAR*taille_ligne_ecran;
-
-    memmove(origine, origine + taille_ligne_texte, (DISPLAY_HEIGHT*taille_ligne_ecran) - taille_ligne_texte );//pour la source, on se place au début de la 2eme ligne
     
-    //memset(origine + (NB_LIGNE_CAR - 1) * HAUTEUR_CAR * taille_ligne_ecran,0,taille_ligne_texte );
+    size_t taille_ligne_ecran = DISPLAY_WIDTH*(DISPLAY_BPP/8);
+    
+    size_t taille_ligne_texte = HAUTEUR_CAR*taille_ligne_ecran;
+    uint8_t *origine = (uint8_t *) BOCHS_DISPLAY_BASE_ADDRESS  ;
+
+    memmove(origine+ taille_ligne_texte , origine + 2*taille_ligne_texte, (NB_LIGNE_CAR-2)*taille_ligne_texte);//pour la source, on se place au début de la 2eme ligne
+    
+    memset(origine+(NB_LIGNE_CAR-1)*taille_ligne_texte    ,0,taille_ligne_texte );
     lig_curseur = NB_LIGNE_CAR-1;
 
 
@@ -109,15 +113,22 @@ void defilement(void){
 void ecrit_car(uint32_t lig, uint32_t col, char c, uint32_t couleur){
         unsigned char *pixels_car = font8x8_basic[(int)c];
         place_curseur(lig,col,0);
+        //on nettoie la case
+        for (int ligne_car =0; ligne_car<LONGUEUR_CAR; ligne_car++){
+            for(int bit =0; bit<LONGUEUR_CAR;   bit++){
+                pixel(col*8+bit, lig*8 +ligne_car,0); 
+            }
+        }
+        //on écrit le caractère
         for( int ligne_car = 0  ; ligne_car<LONGUEUR_CAR; ligne_car++){
             
-            for(int bit = 0; bit<8; bit++){
+            for(int bit = 0; bit<LONGUEUR_CAR; bit++){
                 if((pixels_car[ligne_car] & (1<<bit)) !=0){
                     pixel(col*8 + bit, lig*8 + ligne_car, couleur);
                 }
             }
         }
-        place_curseur(lig, col+1, COULEUR_BASE);
+        
         
     
 
@@ -127,26 +138,29 @@ void ecrit_car(uint32_t lig, uint32_t col, char c, uint32_t couleur){
 void traite_car(char c){
     if (c=='\b'){
         if(col_curseur > 0){
-            //place_curseur(lig_curseur,col_curseur,0);
+            place_curseur(lig_curseur,col_curseur,0);
             col_curseur--;
-            ecrit_car(lig_curseur,col_curseur,' ',COULEUR_BASE);
+            
             place_curseur(lig_curseur, col_curseur, COULEUR_BASE);
         }
+        
        
 
     }
     else if (c=='\t'){
         
         place_curseur(lig_curseur,col_curseur,0);
-        col_curseur+=8;
-        if (lig_curseur >= NB_LIGNE_CAR){
-            defilement();
-            lig_curseur=NB_LIGNE_CAR-1;
-            place_curseur(lig_curseur, 0,COULEUR_BASE);
-        }
-        else if(col_curseur>=NB_COLONNE_CAR){
+        col_curseur = ((col_curseur/8)+1)*8 ;
+       
+        if(col_curseur>=NB_COLONNE_CAR){
             lig_curseur++;
             place_curseur(lig_curseur,0, COULEUR_BASE);
+             if (lig_curseur >= NB_LIGNE_CAR){
+                defilement();
+                //lig_curseur=NB_LIGNE_CAR-1;
+            
+                place_curseur(lig_curseur, 0,COULEUR_BASE);
+        }
         }
         
         else{
@@ -160,6 +174,7 @@ void traite_car(char c){
     }
     else if  (c=='\n'){
        place_curseur(lig_curseur,col_curseur,0);
+       lig_curseur++;
        if(lig_curseur>=NB_LIGNE_CAR){
         defilement();
         lig_curseur=NB_LIGNE_CAR-1;
@@ -167,7 +182,7 @@ void traite_car(char c){
 
        }
        else{
-        lig_curseur++;
+        
         place_curseur(lig_curseur,0,COULEUR_BASE);
 
        }
@@ -181,12 +196,28 @@ void traite_car(char c){
     }
     else if (c=='\r'){
         place_curseur(lig_curseur,col_curseur,0);
-        place_curseur(lig_curseur,0,COULEUR_BASE);
+        col_curseur=0;
+        place_curseur(lig_curseur,col_curseur,COULEUR_BASE);
 
 
     }
     else{
         ecrit_car(lig_curseur,col_curseur,c,COULEUR_BASE);
+        col_curseur++;
+        if(col_curseur >=NB_COLONNE_CAR){
+            if(lig_curseur>=NB_LIGNE_CAR){
+                defilement();
+                lig_curseur=NB_LIGNE_CAR-1;
+
+
+            }
+            else{
+                lig_curseur++;
+                col_curseur=0;  
+            }
+        }
+        place_curseur(lig_curseur, col_curseur, COULEUR_BASE);
+
     }
 }
 extern void console_putbytes(const char *s, int len){
