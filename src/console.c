@@ -13,7 +13,7 @@ static uint32_t lig_curseur =1;
 
 void init_uart(void){
     uint16_t rapport =(UART_CLOCK_FREQ/(16*UART_BAUD_RATE)) ;
-    *(volatile uint8_t*)(UART_BASE + UART_FCR)|= (1<<7); 
+    *(volatile uint8_t*)(UART_BASE + UART_LCR)|= (1<<7); 
     *(volatile uint8_t*)(UART_BASE +UART_DLL) = rapport & 0xff;
     *(volatile uint8_t*)(UART_BASE + UART_DLH)  = (rapport >> 8) & 0xff;
     *(volatile uint8_t*)(UART_BASE + UART_FCR )|= 1;
