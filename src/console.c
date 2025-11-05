@@ -3,12 +3,7 @@
 #include "font.h"
 #include <string.h>
 
-#define LONGUEUR_CAR 8
-#define HAUTEUR_CAR 8
-#define COULEUR_BASE 0xFFFFFFFF
-//definition du nombre de lignes et de colonnes de caractères à l'écran (et non en pixels)
-#define NB_COLONNE_CAR (DISPLAY_WIDTH/LONGUEUR_CAR)
-#define NB_LIGNE_CAR (DISPLAY_HEIGHT/HAUTEUR_CAR)
+
 //position du curseur en (coordonnées de caractères)
 static uint32_t col_curseur =0;
 static uint32_t lig_curseur =1;
