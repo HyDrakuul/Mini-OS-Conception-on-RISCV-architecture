@@ -30,6 +30,7 @@ void proc1(void) {
      printf("[%s] proc1 termine\n", mon_nom());
     hlt();
 }
+
 void proc2(void) {
     for (int i = 0; i < 10; i++) {
         printf("[%s] pid = %i\n", mon_nom(), mon_pid());
@@ -51,22 +52,15 @@ static void (*code_processus[NB_PROCESSUS_MAX])(void) = {idle, proc1, proc2, pro
 /*----------------------------------------------------------------------*/
 //fonctions du gestionnaire de processus
 void init_proc(void){
-    //creation du processus idle
-    processus_t * idle = &table_processus[0];
-    idle->pid =0;
-    strcpy(idle->nom, "idle");
-    idle->etat = ELU;
-    actif = idle;
 
-   for(int i =1; i<NB_PROCESSUS_MAX; i++){
+    actif = &table_processus[0];
+   for(int i =0; i<NB_PROCESSUS_MAX; i++){
         //creation des autres processus
         void (*code_prc)(void) = code_processus[i];
         char nom[TAILLE_NOM]; 
         sprintf(nom,"proc%d", i);
         cree_processus(code_prc, nom);
-        if(cree_processus(code_prc, nom)==-1){
-            printf("Erreur creation processus %d\n", i);
-        }
+       
    }
 
    
@@ -90,9 +84,11 @@ void ordonnance(void){
    //on change l'etat du processus elu
    table_processus[elu].etat = ACTIVABLE;
    //on cherche le prochain processus activable, on effectue un cycle grace au modulo (tourniquet)
+   
    next_elu=(elu+1)%NB_PROCESSUS_MAX;
    //on traite le cas du nouvel elu
    processus_t *p = &table_processus[next_elu];
+   
    p->etat = ELU;
    //changement de contexte
    ancien=actif;
