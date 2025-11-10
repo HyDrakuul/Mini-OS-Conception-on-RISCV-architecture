@@ -16,8 +16,7 @@ void init_uart(void){
     *(volatile uint8_t*)(UART_BASE + UART_DLH)  = (rapport >> 8) & 0xff;
     *(volatile uint8_t*)(UART_BASE + UART_FCR )|= 1;
     *(volatile uint8_t*)(UART_BASE + UART_LCR) = (1<<0)|(1<<1)|(1<<3); 
-    *(volatile uint8_t*)(UART_BASE + UART_LCR) &=~(1<<7);
-    
+    *(volatile uint8_t*)(UART_BASE + UART_LCR) &=~(1<<7); 
 }
 
 void traite_car_uart(char car){
@@ -57,18 +56,17 @@ uint64_t init_ecran(void){
         //erreur type d'écran incorrect 
         return 2;
     }
+
     // on configure selon l'énoncé
     *(volatile uint16_t *)(BOCHS_CONFIG_BASE_ADDRESS + 0x500 + VBE_DISPI_INDEX_ENABLE*2 ) = 0x0000; 
     *(volatile uint16_t *)(BOCHS_CONFIG_BASE_ADDRESS + 0x500 + VBE_DISPI_INDEX_XRES*2) = 0x0400;
     *(volatile uint16_t *)(BOCHS_CONFIG_BASE_ADDRESS + 0x500 + VBE_DISPI_INDEX_YRES*2) = 0x0300;
     *(volatile uint16_t *)(BOCHS_CONFIG_BASE_ADDRESS + 0x500 + VBE_DISPI_INDEX_BPP*2  ) = 0x0020;
     *(volatile uint16_t *)(BOCHS_CONFIG_BASE_ADDRESS + 0x500 + VBE_DISPI_INDEX_X_OFFSET*2   ) = 0x0000;
-
     *(volatile uint16_t *)(BOCHS_CONFIG_BASE_ADDRESS + 0x500 + VBE_DISPI_INDEX_Y_OFFSET*2  ) = 0x0000;
     *(volatile uint16_t *)(BOCHS_CONFIG_BASE_ADDRESS + 0x500 + VBE_DISPI_INDEX_BANK*2 ) = 0x0000;
     *(volatile uint16_t *)(BOCHS_CONFIG_BASE_ADDRESS + 0x500 + VBE_DISPI_INDEX_ENABLE*2 ) = 0x41; 
     return 0;
-
 
 }
 void pixel(uint32_t x, uint32_t y, uint32_t couleur){

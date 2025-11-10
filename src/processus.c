@@ -1,0 +1,126 @@
+#include "processus.h"
+#include <string.h>
+#include <stdio.h>
+#include "console.h"
+#include "cpu.h"
+
+static processus_t table_processus[NB_PROCESSUS_MAX];
+
+
+static processus_t * actif;
+static processus_t * ancien;
+
+//fonctions des processus
+/*----------------------------------------------------------------------*/
+void idle(void)
+{
+    for (int i = 0;i<10;i++) {
+        printf("[%s] pid = %i\n", mon_nom(), mon_pid());
+        ordonnance();
+    }
+    printf("[%s] idle termine\n", mon_nom());
+    hlt();
+}
+
+void proc1(void) {
+    for (int i = 0; i < 10; i++) {
+        printf("[%s] pid = %i\n", mon_nom(), mon_pid());
+        ordonnance();
+    }
+     printf("[%s] proc1 termine\n", mon_nom());
+    hlt();
+}
+void proc2(void) {
+    for (int i = 0; i < 10; i++) {
+        printf("[%s] pid = %i\n", mon_nom(), mon_pid());
+        ordonnance();
+    }
+     printf("[%s] proc2 termine\n", mon_nom());
+    hlt();
+}
+void proc3(void) {
+    for (int i = 0; i < 10; i++) {
+        printf("[%s] pid = %i\n", mon_nom(), mon_pid());
+        ordonnance();
+    }
+     printf("[%s] proc3 termine\n", mon_nom());
+    hlt();
+}
+//creation d'un tableau de pointeurs de fonctions pour les adresses des fonctions processus
+static void (*code_processus[NB_PROCESSUS_MAX])(void) = {idle, proc1, proc2, proc3};
+/*----------------------------------------------------------------------*/
+//fonctions du gestionnaire de processus
+void init_proc(void){
+    //creation du processus idle
+    processus_t * idle = &table_processus[0];
+    idle->pid =0;
+    strcpy(idle->nom, "idle");
+    idle->etat = ELU;
+    actif = idle;
+
+   for(int i =1; i<NB_PROCESSUS_MAX; i++){
+        //creation des autres processus
+        void (*code_prc)(void) = code_processus[i];
+        char nom[TAILLE_NOM]; 
+        sprintf(nom,"proc%d", i);
+        cree_processus(code_prc, nom);
+        if(cree_processus(code_prc, nom)==-1){
+            printf("Erreur creation processus %d\n", i);
+        }
+   }
+
+   
+
+}
+
+
+void ordonnance(void){
+    //indices des processus elu et suivant
+   int elu = -1;
+   int next_elu =-1;
+    //politique du tourniquet 
+   for(int i = 0; i<NB_PROCESSUS_MAX; i++){//on cherche le processus elu
+        processus_t *p = &table_processus[i];
+
+        if(p->etat == ELU ) {
+         elu = i;
+            break;
+        }
+   }
+   //on change l'etat du processus elu
+   table_processus[elu].etat = ACTIVABLE;
+   //on cherche le prochain processus activable, on effectue un cycle grace au modulo (tourniquet)
+   next_elu=(elu+1)%NB_PROCESSUS_MAX;
+   //on traite le cas du nouvel elu
+   processus_t *p = &table_processus[next_elu];
+   p->etat = ELU;
+   //changement de contexte
+   ancien=actif;
+   actif=p;
+   ctx_sw(ancien->ctx, actif->ctx);
+   //printf("Changement de contexte vers %s (pid=%d)\n", mon_nom(), mon_pid());
+   
+   }
+    
+int64_t mon_pid(void){
+    return actif->pid;
+}
+char *mon_nom(void){
+    return actif->nom;
+}
+int64_t cree_processus(void (*code)(void), char *nom){
+    for(int i =1; i<NB_PROCESSUS_MAX;i++){
+        processus_t *p =&table_processus[i];
+        if(p->etat== 0){
+            p->etat= ACTIVABLE;
+            p->ctx[0]=(uint64_t)code; //initialisation ra
+            p->ctx[1]=(uint64_t)(p->pile + TAILLE_PILE); //initialisation sp
+            p->pid=i;
+            strcpy(p->nom, nom);
+            return p->pid;
+
+        }
+    }
+    return -1;
+
+}

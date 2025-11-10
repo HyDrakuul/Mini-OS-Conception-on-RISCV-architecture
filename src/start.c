@@ -2,7 +2,9 @@
 #include <stdio.h>
 #include <cpu.h>
 #include "console.h"
-
+#include "processus.h"
+extern void proc1(void);
+extern void idle(void);
 /* on peut s'entrainer a utiliser GDB avec ce code de base */
 /* par exemple afficher les valeurs de n et res avec la commande display */
 /* une fonction bien connue */
@@ -33,6 +35,10 @@ void kernel_start(void)
     for (int i=0;i<121;i++) {printf("%d\n",i);}
     printf("Hello\n");
     printf("FIN\n");
+    init_proc();
+    idle();
+    
+    
     
     
    
