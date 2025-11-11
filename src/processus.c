@@ -57,9 +57,15 @@ void init_proc(void){
    for(int i =0; i<NB_PROCESSUS_MAX; i++){
         //creation des autres processus
         void (*code_prc)(void) = code_processus[i];
-        char nom[TAILLE_NOM]; 
+        char nom[TAILLE_NOM];
+        if(i==0){
+            //initialisation du processus idle
+            cree_processus(code_prc, "idle");
+        } 
+        else{
         sprintf(nom,"proc%d", i);
         cree_processus(code_prc, nom);
+        }
        
    }
 
@@ -105,7 +111,7 @@ char *mon_nom(void){
     return actif->nom;
 }
 int64_t cree_processus(void (*code)(void), char *nom){
-    for(int i =1; i<NB_PROCESSUS_MAX;i++){
+    for(int i =0; i<NB_PROCESSUS_MAX;i++){
         processus_t *p =&table_processus[i];
         if(p->etat== 0){
             p->etat= ACTIVABLE;
