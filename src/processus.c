@@ -53,7 +53,8 @@ static void (*code_processus[NB_PROCESSUS_MAX])(void) = {idle, proc1, proc2, pro
 //fonctions du gestionnaire de processus
 void init_proc(void){
 
-    actif = &table_processus[0];
+   actif = &table_processus[0];
+   ancien = NULL;
    for(int i =0; i<NB_PROCESSUS_MAX; i++){
         //creation des autres processus
         void (*code_prc)(void) = code_processus[i];
@@ -63,8 +64,8 @@ void init_proc(void){
             cree_processus(code_prc, "idle");
         } 
         else{
-        sprintf(nom,"proc%d", i);
-        cree_processus(code_prc, nom);
+            sprintf(nom,"proc%d", i);
+            cree_processus(code_prc, nom);
         }
        
    }
@@ -116,7 +117,7 @@ int64_t cree_processus(void (*code)(void), char *nom){
         if(p->etat== 0){
             p->etat= ACTIVABLE;
             p->ctx[0]=(uint64_t)code; //initialisation ra
-            p->ctx[1]=(uint64_t)(p->pile + TAILLE_PILE); //initialisation sp
+            p->ctx[1]=(uint64_t)(p->pile + TAILLE_PILE-1); //initialisation sp
             p->pid=i;
             strcpy(p->nom, nom);
             return p->pid;

@@ -4,7 +4,7 @@
 #define TAILLE_NOM 32
 #define NB_REGISTRES_CTX 17
 #define TAILLE_PILE 4096
-#define NB_PROCESSUS_MAX 4
+#define NB_PROCESSUS_MAX 3
 enum etat_processus {ELU, ACTIVABLE, ENDORMI};
 typedef struct processus{
     uint64_t pid;
