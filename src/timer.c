@@ -62,7 +62,10 @@ void init_traitant_timer(void (*traitant)(void)){
 void enable_timer(){
     uint64_t timer = *(volatile uint64_t*)(CLINT_TIMER);
     *(volatile uint64_t*)(CLINT_TIMER_CMP) = timer + (TIMER_FREQ / IT_FREQ);
-    enable_it();
+    __asm__ __volatile__("csrw mie, %0"::"r"(0x80)); //on active les interruptions timer en mettant le bit 7 de mie à 1 (ce que ne fait pas enable_it)
+    enable_it();//on active les interruptions globalement via mstatus
+
+
 
 
 }
