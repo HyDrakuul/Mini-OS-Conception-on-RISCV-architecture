@@ -3,8 +3,11 @@
 #include <cpu.h>
 #include "console.h"
 #include "processus.h"
+#include "timer.h"
 extern void proc1(void);
 extern void idle(void);
+
+extern void mon_traitant(void);
 /* on peut s'entrainer a utiliser GDB avec ce code de base */
 /* par exemple afficher les valeurs de n et res avec la commande display */
 /* une fonction bien connue */
@@ -31,12 +34,17 @@ void kernel_start(void)
     if(init_ecran()==1){printf("Pas de device trouvé\n");}
     else if (init_ecran()==2){  printf("Mauvaise config\n");}
     else if (init_ecran()==0){printf("Bonne config\n");}
+    init_traitant_timer(mon_traitant);
+    enable_timer();
     printf("Truc\nSalut\n1\t2\t3\nAB\bC\nBEEF\rRABBIT");
     for (int i=0;i<121;i++) {printf("%d\n",i);}
+    printf("temps écoulé %u\n", nbr_secondes());
     printf("Hello\n");
     printf("FIN\n");
+    
     init_proc();
     idle();
+    
     
     
     

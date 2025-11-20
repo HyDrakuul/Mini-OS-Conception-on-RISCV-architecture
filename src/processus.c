@@ -5,8 +5,6 @@
 #include "cpu.h"
 
 static processus_t table_processus[NB_PROCESSUS_MAX];
-
-
 static processus_t * actif;
 static processus_t * ancien;
 

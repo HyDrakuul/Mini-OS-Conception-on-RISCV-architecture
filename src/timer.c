@@ -1,8 +1,15 @@
+#include <stdio.h>
 #include <string.h>
+#include <cpu.h>
 #include "platform.h"
 #include "console.h"
 #include "timer.h"
 
+static int nb_secondes =0;
+static int nb_interruptions =0;
+
+
+extern void mon_traitant(void);
 void affichage_haut(const char* s){
     uint32_t len = strlen(s);
     uint32_t colonne = NB_COLONNE_CAR - len;
@@ -16,7 +23,46 @@ void affichage_haut(const char* s){
 
 
 void trap_handler(uint64_t mcause, uint64_t mie, uint64_t mip){
+    //on recupere la cause de l'interruption
     uint64_t cause = mcause & 0x7FFFFFFFFFFFFFFF;
-    if(cause ==7){
+    //on reprogramme la prochaine interruption timer
+    uint64_t timer = *(volatile uint64_t*)(CLINT_TIMER);
+    *(volatile uint64_t*)(CLINT_TIMER_CMP) = timer + (TIMER_FREQ / IT_FREQ);
 
-    }}
+
+
+    //on traite la cause de l'interruption (ici timer )
+    
+    if(cause ==7){
+        nb_interruptions++;
+        if(nb_interruptions%IT_FREQ ==0){
+            nb_secondes++;
+            char time[16];
+            int heure=nb_secondes/3600;
+            int minute=(nb_secondes%3600)/60;
+            int seconde=nb_secondes%60;
+            sprintf(time,"%02d:%02d:%02d",heure,minute,seconde);
+            affichage_haut(time);
+        }
+
+    }
+    
+}
+    
+uint32_t nbr_secondes(void){
+    return nb_secondes;
+}   
+void init_traitant_timer(void (*traitant)(void)){
+    uint64_t address_traitant = (uint64_t) traitant;
+    //on place l'adresse du traitant dans mtvec
+    __asm__ __volatile__("csrw mtvec, %0"::"r"(address_traitant));   
+
+
+}
+void enable_timer(){
+    uint64_t timer = *(volatile uint64_t*)(CLINT_TIMER);
+    *(volatile uint64_t*)(CLINT_TIMER_CMP) = timer + (TIMER_FREQ / IT_FREQ);
+    enable_it();
+
+
+}
