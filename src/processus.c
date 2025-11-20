@@ -7,6 +7,7 @@
 static processus_t table_processus[NB_PROCESSUS_MAX];
 static processus_t * actif;
 static processus_t * ancien;
+static int processus_crees =1; //le processus idle est deja cree
 
 //fonctions des processus
 /*----------------------------------------------------------------------*/
@@ -115,18 +116,19 @@ char *mon_nom(void){
     return actif->nom;
 }
 int64_t cree_processus(void (*code)(void), char *nom){
-    for(int i =1; i<NB_PROCESSUS_MAX;i++){
-        processus_t *p =&table_processus[i];
+    
+        processus_t *p =&table_processus[processus_crees];
         if(p->etat== 0){
             p->etat= ACTIVABLE;
             p->ctx[0]=(uint64_t)code; //initialisation ra
             p->ctx[1]=(uint64_t)(p->pile + TAILLE_PILE); //initialisation sp
-            p->pid=i;
+            p->pid=processus_crees;
             strcpy(p->nom, nom);
+            processus_crees++;
             return p->pid;
 
         }
-    }
+    
     return -1;
 
 }
