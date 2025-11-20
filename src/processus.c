@@ -60,7 +60,7 @@ void init_proc(void){
     p->pid = 0;
     strcpy(p->nom, "idle");
     actif = p;
-   for(int i =0; i<NB_PROCESSUS_MAX; i++){
+   for(int i =1; i<NB_PROCESSUS_MAX; i++){
         //creation des autres processus
         void (*code_prc)(void) = code_processus[i];
         char nom[TAILLE_NOM];
@@ -93,6 +93,9 @@ void ordonnance(void){
    //on cherche le prochain processus activable, on effectue un cycle grace au modulo (tourniquet)
    
    next_elu=(elu+1)%NB_PROCESSUS_MAX;
+   while(table_processus[next_elu].etat != ACTIVABLE){
+        next_elu=(next_elu+1)%NB_PROCESSUS_MAX;
+   }    
    //on traite le cas du nouvel elu
    processus_t *p = &table_processus[next_elu];
    
