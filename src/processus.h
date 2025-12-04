@@ -12,13 +12,16 @@ typedef struct processus{
     enum etat_processus etat;
     uint64_t ctx[NB_REGISTRES_CTX];
     uint64_t pile[TAILLE_PILE];
-    //pointeur vers le processus suivant
+   
+    uint64_t reveil_prevu;
+
 } processus_t;
 
 void init_proc(void);
 void ordonnance(void);
 int64_t mon_pid(void);
 char *mon_nom(void);
+void dors(uint64_t nbr_secs);
 void ctx_sw(uint64_t *ctxt_de_sauvegarde, uint64_t *ctxt_a_restaurer);
 int64_t cree_processus(void (*code)(void), char *nom);
 #endif

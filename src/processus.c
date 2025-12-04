@@ -3,15 +3,15 @@
 #include <stdio.h>
 #include "console.h"
 #include "cpu.h"
-
+#include "timer.h"
 static processus_t table_processus[NB_PROCESSUS_MAX]; 
 
 static processus_t * actif;
 static processus_t * ancien;
 static int processus_crees= 0; //le processus idle est deja cree
 //indices des processus elu et suivant
-int elu = 0;
-int next_elu =-1;
+static int elu = 0;
+static int next_elu =-1;
 //fonctions des processus
 /*----------------------------------------------------------------------*/
 void idle(void)
@@ -66,6 +66,7 @@ void init_proc(void){
 
 void ordonnance(void){
     
+    
   
     //politique du tourniquet 
 //    for(int i = 0; i<processus_crees; i++){//on cherche le processus elu
@@ -80,7 +81,13 @@ void ordonnance(void){
    //on change l'etat du processus elu
    table_processus[elu].etat = ACTIVABLE;
    //on cherche le prochain processus activable, on effectue un cycle grace au modulo (tourniquet)
-   
+   for(int reveil =1; reveil <= processus_crees; reveil++){
+        if(table_processus[next_elu].etat ==ENDORMI){
+            if(nbr_secondes() >= table_processus[next_elu].reveil_prevu){
+                table_processus[next_elu].etat = ACTIVABLE; 
+                
+            }
+   }
    next_elu=(elu+1)%processus_crees;
    while(table_processus[next_elu].etat != ACTIVABLE){
         next_elu=(next_elu+1)%processus_crees;
@@ -97,7 +104,11 @@ void ordonnance(void){
    //printf("Changement de contexte vers %s (pid=%d)\n", mon_nom(), mon_pid());
    
    }
-    
+void  dors(uint64_t nbr_secs){
+    actif->etat = ENDORMI;
+    actif->reveil_prevu = nbr_secondes() + nbr_secs;
+
+}
 int64_t mon_pid(void){
     return actif->pid;
 }
