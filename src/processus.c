@@ -92,7 +92,7 @@ void ordonnance(void){
     //aucun processus activable, on reste sur l'elu actuel
     return;
    }    
-   if (table_processus[elu].etat == ELU){
+   if (table_processus[start].etat == ELU){
     table_processus[start].etat = ACTIVABLE;}
     
    //on traite le cas du nouvel elu
