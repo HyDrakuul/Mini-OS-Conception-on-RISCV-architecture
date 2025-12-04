@@ -43,7 +43,13 @@ void kernel_start(void)
     printf("FIN\n");
     
     init_proc();
+    cree_processus(proc1, "proc1");
+    cree_processus(proc1, "proc2"); 
+    cree_processus(proc1, "proc3");
+    cree_processus(proc1, "proc4");
+
     idle();
+  
     
     
     
