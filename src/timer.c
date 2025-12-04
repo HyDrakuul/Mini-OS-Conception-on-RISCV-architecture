@@ -4,6 +4,7 @@
 #include "platform.h"
 #include "console.h"
 #include "timer.h"
+#include "processus.h"
 
 static int nb_secondes =0;
 static int nb_interruptions =0;
@@ -35,6 +36,7 @@ void trap_handler(uint64_t mcause, uint64_t mie, uint64_t mip){
     
     if(cause ==7){
         nb_interruptions++;
+        ordonnance(); 
         if(nb_interruptions%IT_FREQ ==0){
             nb_secondes++;
             char time[16];
@@ -42,10 +44,14 @@ void trap_handler(uint64_t mcause, uint64_t mie, uint64_t mip){
             int minute=(nb_secondes%3600)/60;
             int seconde=nb_secondes%60;
             sprintf(time,"%02d:%02d:%02d",heure,minute,seconde);
+            
+            
             affichage_haut(time);
-        }
+        } 
+        
 
     }
+    
     
 }
     

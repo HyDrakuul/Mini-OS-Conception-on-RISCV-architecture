@@ -13,7 +13,7 @@ typedef struct processus{
     uint64_t ctx[NB_REGISTRES_CTX];
     uint64_t pile[TAILLE_PILE];
     //pointeur vers le processus suivant
-}   processus_t;
+} processus_t;
 
 void init_proc(void);
 void ordonnance(void);

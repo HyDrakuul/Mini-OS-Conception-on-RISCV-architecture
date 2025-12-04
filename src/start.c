@@ -22,6 +22,56 @@ extern void mon_traitant(void);
     return res;
 }*/
 
+
+void proc1(void)
+{
+    for (;;) {
+        printf("[%s] pid = %i\n", mon_nom(), mon_pid());
+         enable_it();
+        hlt();
+        disable_it();
+    }
+    printf("[%s] idle termine\n", mon_nom());
+
+    
+}
+void proc2(void)
+{
+    for (;;) {
+        printf("[%s] pid = %i\n", mon_nom(), mon_pid());
+        enable_it();
+        hlt();
+        disable_it();
+    }
+    printf("[%s] idle termine\n", mon_nom());
+
+}
+
+void proc3(void)
+{
+    for (;;) {
+        printf("[%s] pid = %i\n", mon_nom(), mon_pid());
+        enable_it();
+        hlt();
+        disable_it();
+    }
+    printf("[%s] idle termine\n", mon_nom());
+
+}
+
+void proc4(void)
+{
+    for (;;) {
+        printf("[%s] pid = %i\n", mon_nom(), mon_pid());
+        enable_it();
+        hlt();
+        disable_it();
+    }
+    printf("[%s] idle termine\n", mon_nom());
+
+}
+
+
 void kernel_start(void)
 {
 
@@ -36,20 +86,20 @@ void kernel_start(void)
     else if (init_ecran()==0){printf("Bonne config\n");}
     init_traitant_timer(mon_traitant);
     enable_timer();
+    init_proc();
     printf("Truc\nSalut\n1\t2\t3\nAB\bC\nBEEF\rRABBIT");
     for (int i=0;i<121;i++) {printf("%d\n",i);}
     printf("temps écoulé %u\n", nbr_secondes());
     printf("Hello\n");
     printf("FIN\n");
     
-    init_proc();
+    
     cree_processus(proc1, "proc1");
-    cree_processus(proc1, "proc2"); 
-    cree_processus(proc1, "proc3");
-    cree_processus(proc1, "proc4");
+    cree_processus(proc2, "proc2"); 
+    cree_processus(proc3, "proc3");
+    cree_processus(proc4, "proc4");
 
     idle();
-  
     
     
     
