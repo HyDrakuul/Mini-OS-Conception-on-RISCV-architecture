@@ -68,10 +68,7 @@ void ordonnance(void){
 //             break;
 //         }
 //    }
-
-   //on change l'etat du processus elu
-   table_processus[elu].etat = ACTIVABLE;
-   //on cherche le prochain processus activable, on effectue un cycle grace au modulo (tourniquet)
+ //on cherche le prochain processus activable, on effectue un cycle grace au modulo (tourniquet)
    for(int reveil =1; reveil < processus_crees; reveil++){
         if(table_processus[reveil].etat ==ENDORMI){
             if(table_processus[reveil].reveil_prevu <= nbr_secondes()){
@@ -80,7 +77,10 @@ void ordonnance(void){
             }
         }
     }
-
+   //on change l'etat du processus elu si il n'est pas endormi
+   if(table_processus[elu].etat == ELU){
+    table_processus[elu].etat = ACTIVABLE;
+   }
    next_elu=(elu+1)%processus_crees;
    int start = next_elu;//pour eviter une boucle infinie si aucun processus n'est activable
    while(table_processus[next_elu].etat != ACTIVABLE){
@@ -97,11 +97,18 @@ void ordonnance(void){
    
    p->etat = ELU;
    //changement de contexte
+
    ancien=actif;
    actif=p;
+   
    ctx_sw(ancien->ctx, actif->ctx);
    //printf("Changement de contexte vers %s (pid=%d)\n", mon_nom(), mon_pid());
    
+
+   
+  
+
+  
 }
 
 

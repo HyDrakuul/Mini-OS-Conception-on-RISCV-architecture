@@ -26,7 +26,9 @@ extern void mon_traitant(void);
 
 void proc1(void)
 {
+    enable_it();
     for (;;) {
+
         printf("[temps = %u] processus %s pid = %i\n",
                nbr_secondes(),
                mon_nom(),
@@ -37,6 +39,7 @@ void proc1(void)
 
 void proc2(void)
 {
+    enable_it();
     for (;;) {
         printf("[temps = %u] processus %s pid = %i\n",
                nbr_secondes(),
@@ -48,6 +51,7 @@ void proc2(void)
 
 void proc3(void)
 {
+    enable_it();
     for (;;) {
         printf("[temps = %u] processus %s pid = %i\n",
                nbr_secondes(),
@@ -82,8 +86,8 @@ void kernel_start(void)
     printf("%u\n", nbr_secondes());
     
     cree_processus(proc1, "proc1");
-    // cree_processus(proc2, "proc2"); 
-    // cree_processus(proc3, "proc3");
+    cree_processus(proc2, "proc2"); 
+    cree_processus(proc3, "proc3");
 
 
     idle();
