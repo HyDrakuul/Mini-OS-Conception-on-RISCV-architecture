@@ -23,55 +23,39 @@ extern void mon_traitant(void);
 }*/
 
 
+
 void proc1(void)
 {
     for (;;) {
-        printf("[%s] pid = %i\n", mon_nom(), mon_pid());
-         enable_it();
-        hlt();
-        disable_it();
+        printf("[temps = %u] processus %s pid = %i\n",
+               nbr_secondes(),
+               mon_nom(),
+               mon_pid());
+        dors(2);
     }
-    printf("[%s] idle termine\n", mon_nom());
-
-    
 }
+
 void proc2(void)
 {
     for (;;) {
-        printf("[%s] pid = %i\n", mon_nom(), mon_pid());
-        enable_it();
-        hlt();
-        disable_it();
+        printf("[temps = %u] processus %s pid = %i\n",
+               nbr_secondes(),
+               mon_nom(),
+               mon_pid());
+        dors(3);
     }
-    printf("[%s] idle termine\n", mon_nom());
-
 }
 
 void proc3(void)
 {
     for (;;) {
-        printf("[%s] pid = %i\n", mon_nom(), mon_pid());
-        enable_it();
-        hlt();
-        disable_it();
+        printf("[temps = %u] processus %s pid = %i\n",
+               nbr_secondes(),
+               mon_nom(),
+               mon_pid());
+        dors(5);
     }
-    printf("[%s] idle termine\n", mon_nom());
-
 }
-
-void proc4(void)
-{
-    for (;;) {
-        printf("[%s] pid = %i\n", mon_nom(), mon_pid());
-        enable_it();
-        hlt();
-        disable_it();
-    }
-    printf("[%s] idle termine\n", mon_nom());
-
-}
-
-
 void kernel_start(void)
 {
 
@@ -79,25 +63,28 @@ void kernel_start(void)
     /* quand on saura gerer l'ecran, on pourra afficher x */
     init_uart();
     
-    printf("> Test [printf UART] (1/1)\n");
+  
     init_ecran();
     if(init_ecran()==1){printf("Pas de device trouvé\n");}
     else if (init_ecran()==2){  printf("Mauvaise config\n");}
     else if (init_ecran()==0){printf("Bonne config\n");}
-    init_traitant_timer(mon_traitant);
+    
+    
     enable_timer();
+    init_traitant_timer(mon_traitant);
     init_proc();
+    
     printf("Truc\nSalut\n1\t2\t3\nAB\bC\nBEEF\rRABBIT");
     for (int i=0;i<121;i++) {printf("%d\n",i);}
     printf("temps écoulé %u\n", nbr_secondes());
     printf("Hello\n");
     printf("FIN\n");
-    
+    printf("%u\n", nbr_secondes());
     
     cree_processus(proc1, "proc1");
-    cree_processus(proc2, "proc2"); 
-    cree_processus(proc3, "proc3");
-    cree_processus(proc4, "proc4");
+    // cree_processus(proc2, "proc2"); 
+    // cree_processus(proc3, "proc3");
+
 
     idle();
     

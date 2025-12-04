@@ -14,18 +14,18 @@ static int elu = 0;
 static int next_elu =-1;
 //fonctions des processus
 /*----------------------------------------------------------------------*/
-void idle(void)
+void idle()
 {
     for (;;) {
-        printf("[%s] pid = %i\n", mon_nom(), mon_pid());
+        printf("[temps = %u] processus %s pid = %i\n",
+               nbr_secondes(),
+               mon_nom(),
+               mon_pid());  
         enable_it();
         hlt();
         disable_it();
     }
-    printf("[%s] idle termine\n", mon_nom());
-    
 }
-
 //creation d'un tableau de pointeurs de fonctions pour les adresses des fonctions processus
 //static void (*code_processus[NB_PROCESSUS_MAX])(void) = {idle, proc1, proc2, proc3};
 /*----------------------------------------------------------------------*/
@@ -46,20 +46,11 @@ void init_proc(void){
     p->ctx[0] = (uint64_t)idle; //initialisation ra
     p->ctx[1] = (uint64_t)(p->pile + TAILLE_PILE); //initialisation sp
     p->pid = 0;
+    p->reveil_prevu = 0;
     strcpy(p->nom, "idle");
     actif = p;
     processus_crees = 1;
-//    for(int i =1; i<NB_PROCESSUS_MAX; i++){
-//         //creation des autres processus
-//         void (*code_prc)(void) = code_processus[i];
-//         char nom[TAILLE_NOM];
-//         sprintf(nom,"proc%d", i);
-//         cree_processus(code_prc, nom);
-        
-       
-//    }
 
-   
 
 }
 
@@ -81,16 +72,24 @@ void ordonnance(void){
    //on change l'etat du processus elu
    table_processus[elu].etat = ACTIVABLE;
    //on cherche le prochain processus activable, on effectue un cycle grace au modulo (tourniquet)
-   for(int reveil =1; reveil <= processus_crees; reveil++){
-        if(table_processus[next_elu].etat ==ENDORMI){
-            if(nbr_secondes() >= table_processus[next_elu].reveil_prevu){
-                table_processus[next_elu].etat = ACTIVABLE; 
+   for(int reveil =1; reveil < processus_crees; reveil++){
+        if(table_processus[reveil].etat ==ENDORMI){
+            if(table_processus[reveil].reveil_prevu <= nbr_secondes()){
+                table_processus[reveil].etat = ACTIVABLE; 
                 
             }
-   }
+        }
+    }
+
    next_elu=(elu+1)%processus_crees;
+   int start = next_elu;//pour eviter une boucle infinie si aucun processus n'est activable
    while(table_processus[next_elu].etat != ACTIVABLE){
         next_elu=(next_elu+1)%processus_crees;
+        if(next_elu==start){
+                next_elu=elu;
+          break; //on a fait un tour complet, on reste sur l'ancien elu
+        }   
+
    }    
    //on traite le cas du nouvel elu
    processus_t *p = &table_processus[next_elu];
@@ -103,12 +102,17 @@ void ordonnance(void){
    ctx_sw(ancien->ctx, actif->ctx);
    //printf("Changement de contexte vers %s (pid=%d)\n", mon_nom(), mon_pid());
    
-   }
-void  dors(uint64_t nbr_secs){
-    actif->etat = ENDORMI;
-    actif->reveil_prevu = nbr_secondes() + nbr_secs;
-
 }
+
+
+void  dors(uint64_t nbr_secs){
+    if(actif->pid !=0){
+        actif->etat = ENDORMI;
+        actif->reveil_prevu = nbr_secondes() + nbr_secs;
+    }
+    
+
+}   
 int64_t mon_pid(void){
     return actif->pid;
 }
@@ -123,6 +127,7 @@ int64_t cree_processus(void (*code)(void), char *nom){
             p->ctx[0]=(uint64_t)code; //initialisation ra
             p->ctx[1]=(uint64_t)(p->pile + TAILLE_PILE); //initialisation sp
             p->pid=processus_crees;
+            p->reveil_prevu =0; 
             strcpy(p->nom, nom);
             processus_crees++;
             return p->pid;

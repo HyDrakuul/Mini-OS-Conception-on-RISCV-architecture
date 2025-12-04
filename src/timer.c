@@ -55,7 +55,7 @@ void trap_handler(uint64_t mcause, uint64_t mie, uint64_t mip){
     
 }
     
-uint32_t nbr_secondes(void){
+uint64_t nbr_secondes(void){
     return nb_secondes;
 }   
 void init_traitant_timer(void (*traitant)(void)){

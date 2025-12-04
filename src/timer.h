@@ -6,7 +6,7 @@ void affichage_haut(const char* s);
 void trap_handler(uint64_t mcause, uint64_t mie, uint64_t mip);
 void init_traitant_timer(void (*traitant)(void));
 void enable_timer();
-uint32_t nbr_secondes(void);
+uint64_t nbr_secondes(void);
 
 
 

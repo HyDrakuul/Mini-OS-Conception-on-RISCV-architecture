@@ -164,9 +164,9 @@ void traite_car(char c){
     else if (c=='\t'){
         //tabulation, on avance au prochain multiple de 8
         
-        place_curseur(lig_curseur,col_curseur,0);
+        place_curseur(lig_curseur,col_curseur,0);                              
         col_curseur = ((col_curseur/8)+1)*8 ;
-       //si on dépasse la fin de la ligne, on passe à la ligne suivante
+       //si on dépasse la fin de la ligne, on passe à la ligne suivante                           
         if(col_curseur>=NB_COLONNE_CAR){
             lig_curseur++;
             place_curseur(lig_curseur,0, COULEUR_BASE);
