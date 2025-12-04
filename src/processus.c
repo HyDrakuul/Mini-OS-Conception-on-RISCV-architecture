@@ -78,19 +78,23 @@ void ordonnance(void){
         }
     }
    //on change l'etat du processus elu si il n'est pas endormi
-   if(table_processus[elu].etat == ELU){
-    table_processus[elu].etat = ACTIVABLE;
-   }
+
+  
+
+   int start = elu;
    next_elu=(elu+1)%processus_crees;
-   int start = next_elu;//pour eviter une boucle infinie si aucun processus n'est activable
-   while(table_processus[next_elu].etat != ACTIVABLE){
+  //pour eviter une boucle infinie si aucun processus n'est activable
+   while(next_elu !=start && table_processus[next_elu].etat != ACTIVABLE){
         next_elu=(next_elu+1)%processus_crees;
-        if(next_elu==start){
-                next_elu=elu;
-          break; //on a fait un tour complet, on reste sur l'ancien elu
-        }   
 
    }    
+   if (table_processus[next_elu].etat != ACTIVABLE){
+    //aucun processus activable, on reste sur l'elu actuel
+    return;
+   }    
+   if (table_processus[elu].etat == ELU){
+    table_processus[start].etat = ACTIVABLE;}
+    
    //on traite le cas du nouvel elu
    processus_t *p = &table_processus[next_elu];
    elu =next_elu;
