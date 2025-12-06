@@ -31,7 +31,7 @@ void idle()
 /*----------------------------------------------------------------------*/
 //fonctions du gestionnaire de processus
 void init_proc(void){ 
-    for(int i=0; i<processus_crees; i++){
+    for(int i=0; i<NB_PROCESSUS_MAX; i++){
         memset(&table_processus[i], 0, sizeof(processus_t));
         table_processus[i].etat=0; //initialisation des etats des processus a 0 (non utilises)
     }
@@ -131,9 +131,11 @@ char *mon_nom(void){
     return actif->nom;
 }
 int64_t cree_processus(void (*code)(void), char *nom){
-    
+        if(processus_crees>=NB_PROCESSUS_MAX){
+            return -1;
+        }
         processus_t *p =&table_processus[processus_crees];
-        if(p->etat== 0){
+        
             p->etat= ACTIVABLE;
             p->ctx[0]=(uint64_t)code; //initialisation ra
             p->ctx[1]=(uint64_t)(p->pile + TAILLE_PILE); //initialisation sp
@@ -143,8 +145,8 @@ int64_t cree_processus(void (*code)(void), char *nom){
             processus_crees++;
             return p->pid;
 
-        }
+        
     
-    return -1;
+    
 
 }
