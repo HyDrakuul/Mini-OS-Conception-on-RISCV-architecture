@@ -120,6 +120,7 @@ void  dors(uint64_t nbr_secs){
     if(actif->pid !=0){
         actif->etat = ENDORMI;
         actif->reveil_prevu = nbr_secondes() + nbr_secs;
+        ordonnance();
     }
     
 
@@ -147,6 +148,6 @@ int64_t cree_processus(void (*code)(void), char *nom){
 
         
     
-    
+        
 
 }
