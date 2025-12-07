@@ -166,7 +166,7 @@ void kernel_start(void)
     cree_processus(proc1, "proc1");
     cree_processus(proc2, "proc2"); 
 
-     cree_processus(proc3, "proc3");
+    cree_processus(proc3, "proc3");
 
 
 

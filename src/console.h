@@ -4,7 +4,7 @@
 #define LONGUEUR_CAR 8
 #define HAUTEUR_CAR 8
 #define COULEUR_BASE 0xFFFFFFFF
-//definition du nombre de lignes et de colonnes de caractères à l'écran (et non en pixels)
+/*definition du nombre de lignes et de colonnes de caractères à l'écran (et non en pixels)*/
 #define NB_COLONNE_CAR (DISPLAY_WIDTH/LONGUEUR_CAR)
 #define NB_LIGNE_CAR (DISPLAY_HEIGHT/HAUTEUR_CAR)
 /*
