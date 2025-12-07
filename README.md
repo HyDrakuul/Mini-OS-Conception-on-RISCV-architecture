@@ -47,7 +47,7 @@
 ![terminaison_explicite](https://pcs-louising-a1584e.pages.ensimag.fr/terminaison_explicite.svg)
 ![terminaison_implicite](https://pcs-louising-a1584e.pages.ensimag.fr/terminaison_implicite.svg)
 
-#Informations supplémentaires
+# Informations supplémentaires
 L'ensemble du cahier des charges minimal a été traité et réussi. 
 Les différentes parties ont été séparées en différents fichier (processus/console/timer).
 Les tests sont effectués dans start.c.
