@@ -23,6 +23,7 @@ void affichage_haut(const char* s){
 
 
 
+
 void trap_handler(uint64_t mcause, uint64_t mie, uint64_t mip){
     //on recupere la cause de l'interruption
     uint64_t cause = mcause & 0x7FFFFFFFFFFFFFFF;
@@ -36,7 +37,9 @@ void trap_handler(uint64_t mcause, uint64_t mie, uint64_t mip){
     
     if(cause ==7){
         nb_interruptions++;
+        //on ordonne automatiquement à chaque interruption timer
         ordonnance(); 
+        //on change l'etat de l'horloge chque seconde
         if(nb_interruptions%IT_FREQ ==0){
             nb_secondes++;
             char time[16];
@@ -45,7 +48,7 @@ void trap_handler(uint64_t mcause, uint64_t mie, uint64_t mip){
             int seconde=nb_secondes%60;
             sprintf(time,"%02d:%02d:%02d",heure,minute,seconde);
             
-            
+            //affiche_etats();
             affichage_haut(time);
         } 
         
@@ -54,6 +57,7 @@ void trap_handler(uint64_t mcause, uint64_t mie, uint64_t mip){
     
     
 }
+
     
 uint64_t nbr_secondes(void){
     return nb_secondes;

@@ -22,10 +22,13 @@ ctx_sw:
     sd s9,  13*8(a0)
     sd s10, 14*8(a0)
     sd s11, 15*8(a0)
+    /* on ajoute l'argument pour la fonction proc_launcher*/
+    sd a0, 16*8(a0)
     csrrs s1,mepc,zero
-    sd s1, 16*8(a0)
+    /*mepc passe à l'offset 17 en consequence*/
+    sd s1, 17*8(a0)
 
-    ld s1, 16*8(a1)
+    ld s1, 17*8(a1)
     csrrw zero,mepc,s1
     ld ra,   0*8(a1)
     ld sp,   1*8(a1)
@@ -43,4 +46,5 @@ ctx_sw:
     ld s9,  13*8(a1)
     ld s10, 14*8(a1)
     ld s11, 15*8(a1)
+    ld a0, 16*8(a1)
     ret

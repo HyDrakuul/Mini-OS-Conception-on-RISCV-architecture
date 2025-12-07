@@ -24,42 +24,120 @@ extern void mon_traitant(void);
 
 
 
+// void proc1(void)
+// {
+//     enable_it();
+//     for (;;) {
+
+//         printf("[temps = %u] processus %s pid = %i\n",
+//                nbr_secondes(),
+//                mon_nom(),
+//                mon_pid());
+//         dors(2);
+//     }
+// }
+
+// void proc2(void)
+// {
+//     enable_it();
+//     for (;;) {
+//         printf("[temps = %u] processus %s pid = %i\n",
+//                nbr_secondes(),
+//                mon_nom(),
+//                mon_pid());
+//         dors(3);
+//     }
+// }
+
+// void proc3(void)
+// {
+//     enable_it();
+//     for (;;) {
+//         printf("[temps = %u] processus %s pid = %i\n",
+//                nbr_secondes(),
+//                mon_nom(),
+//                mon_pid());
+//         dors(5);
+//     }
+// }
+
+
+// void proc1(void)
+// {
+//     for (int32_t i = 0; i < 2; i++) {
+//         printf("[temps = %u] processus %s pid = %i\n",
+//                nbr_secondes(),
+//                mon_nom(),
+//                mon_pid());
+//         dors(2);
+//     }
+//     fin_processus();
+// }
+
+// void proc2(void)
+// {
+//     for (int32_t i = 0; i < 2; i++) {
+//         printf("[temps = %u] processus %s pid = %i\n",
+//                nbr_secondes(),
+//                mon_nom(),
+//                mon_pid());
+//         dors(3);
+//     }
+//     fin_processus();
+// }
+
+// void proc3(void)
+// {
+//     for (int32_t i = 0; i < 2; i++) {
+//         printf("[temps = %u] processus %s pid = %i\n",
+//                nbr_secondes(),
+//                mon_nom(),
+//                mon_pid());
+//         dors(5);
+//     }
+//     fin_processus();
+// }
 void proc1(void)
 {
-    enable_it();
-    for (;;) {
-
+    for (int32_t i = 0; i < 2; i++) {
         printf("[temps = %u] processus %s pid = %i\n",
                nbr_secondes(),
                mon_nom(),
                mon_pid());
         dors(2);
     }
+    cree_processus(proc1,"proc1");
+   
 }
 
 void proc2(void)
 {
-    enable_it();
-    for (;;) {
+    for (int32_t i = 0; i < 2; i++) {
         printf("[temps = %u] processus %s pid = %i\n",
                nbr_secondes(),
                mon_nom(),
                mon_pid());
         dors(3);
     }
+    cree_processus(proc2,"proc2");
+  
 }
 
 void proc3(void)
 {
-    enable_it();
-    for (;;) {
+    for (int32_t i = 0; i < 2; i++) {
         printf("[temps = %u] processus %s pid = %i\n",
                nbr_secondes(),
                mon_nom(),
                mon_pid());
         dors(5);
     }
+    cree_processus(proc3,"proc3");
+
+   
 }
+
+
 void kernel_start(void)
 {
 
@@ -84,10 +162,13 @@ void kernel_start(void)
     printf("Hello\n");
     printf("FIN\n");
     printf("%u\n", nbr_secondes());
-    
+  
     cree_processus(proc1, "proc1");
     cree_processus(proc2, "proc2"); 
-    cree_processus(proc3, "proc3");
+
+     cree_processus(proc3, "proc3");
+
+
 
 
     idle();
