@@ -9,10 +9,4 @@ void enable_timer();
 uint64_t nbr_secondes(void);
 
 
-
-
-
-
-
-
 #endif 

@@ -2,7 +2,7 @@
 #define __PROCESSUS_H__
 #include <inttypes.h>
 #define TAILLE_NOM 32
-#define NB_REGISTRES_CTX 17
+#define NB_REGISTRES_CTX 18
 #define TAILLE_PILE 4096
 #define NB_PROCESSUS_MAX  50
 enum etat_processus {ELU, ACTIVABLE, ENDORMI,MORT};

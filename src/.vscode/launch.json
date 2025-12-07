@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "/Users/gyanlouisin/Documents/Phelma/2A/Conception de système d'exploitation/PCS_louising/src",
+      "program": "/Users/gyanlouisin/Documents/Phelma/2A/Conception de système d'exploitation/PCS_louising/src/build/Debug/outDebug"
+    }
+  ]
+}
