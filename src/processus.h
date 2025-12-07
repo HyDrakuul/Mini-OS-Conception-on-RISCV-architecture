@@ -25,6 +25,6 @@ void dors(uint64_t nbr_secs);
 void ctx_sw(uint64_t *ctxt_de_sauvegarde, uint64_t *ctxt_a_restaurer);
 int64_t cree_processus(void (*code)(void), char *nom);
 void fin_processus(void);
-void affiche_etats(void);
+//void affiche_etats(void);
 void proc_launcher(void (*proc)(void));
 #endif

@@ -103,7 +103,7 @@
     
     
     ctx_sw(ancien->ctx, actif->ctx);
-    affiche_etats(); 
+    //affiche_etats(); 
     //printf("Changement de contexte vers %s (pid=%d)\n", mon_nom(), mon_pid()); 
     }
 
@@ -169,53 +169,53 @@
         }
 
     } 
-    void affiche_etats(void){
-        //affichage des etats des processus en cours d'exe
+    // void affiche_etats(void){
+    //     //affichage des etats des processus en cours d'exe
         
-        char infos_proc[NB_COLONNE_CAR-16];
-        uint32_t colonne =0 ;
-        //on verifie l'etat de chaque processus
-        for(int i=0; i<processus_crees; i++){
-            processus_t *p =&table_processus[i];
-            char state[16];
-            // conversion de enum en char
-            if(p->etat == ELU){
-                sprintf(state,"ELU");
+    //     char infos_proc[NB_COLONNE_CAR-16];
+    //     uint32_t colonne =0 ;
+    //     //on verifie l'etat de chaque processus
+    //     for(int i=0; i<processus_crees; i++){
+    //         processus_t *p =&table_processus[i];
+    //         char state[16];
+    //         // conversion de enum en char
+    //         if(p->etat == ELU){
+    //             sprintf(state,"ELU");
 
-            }
-            else if(p->etat == ACTIVABLE){
-                sprintf(state,"ACTIVABLE");
+    //         }
+    //         else if(p->etat == ACTIVABLE){
+    //             sprintf(state,"ACTIVABLE");
                 
-            }
-            else if(p->etat == ENDORMI){
-                sprintf(state,"ENDORMI");
-            }
-            else{
-                sprintf(state,"MORT");
+    //         }
+    //         else if(p->etat == ENDORMI){
+    //             sprintf(state,"ENDORMI");
+    //         }
+    //         else{
+    //             sprintf(state,"MORT");
 
-            }
-            //nettoyage de la ligne pour eviter les artefacts 
-            memset(infos_proc, ' ', NB_COLONNE_CAR-16);
-            infos_proc[NB_COLONNE_CAR-16 - 1] = '\0';
-            //chaine de caractère standardisée, taille max de state de 8 car pour eviter les artefacts
-            snprintf(infos_proc,NB_COLONNE_CAR-16,"%s;pid:%d;etat:%-8s ", p->nom,p->pid, state);
-            //on ne doit pas depasser la fin de la ligne 
-            int len = strlen(infos_proc);
-            if (colonne + len > NB_COLONNE_CAR) {
-                break;
-            }
-            //ecriture de la chaine infos_proc qui vient d'être construite 
-        for(int j=0; j<len; j++){
-            ecrit_car(0,colonne+j,infos_proc[j],COULEUR_BASE);
+    //         }
+    //         //nettoyage de la ligne pour eviter les artefacts 
+    //         memset(infos_proc, ' ', NB_COLONNE_CAR-16);
+    //         infos_proc[NB_COLONNE_CAR-16 - 1] = '\0';
+    //         //chaine de caractère standardisée, taille max de state de 8 car pour eviter les artefacts
+    //         snprintf(infos_proc,NB_COLONNE_CAR-16,"%s;pid:%d;etat:%-8s ", p->nom,p->pid, state);
+    //         //on ne doit pas depasser la fin de la ligne 
+    //         int len = strlen(infos_proc);
+    //         if (colonne + len > NB_COLONNE_CAR) {
+    //             break;
+    //         }
+    //         //ecriture de la chaine infos_proc qui vient d'être construite 
+    //     for(int j=0; j<len; j++){
+    //         ecrit_car(0,colonne+j,infos_proc[j],COULEUR_BASE);
         
-        }
-        //on passe au processus suivant donc on commence l'criture à la colonne len
-        colonne +=len;
+    //     }
+    //     //on passe au processus suivant donc on commence l'criture à la colonne len
+    //     colonne +=len;
 
-        }
+    //     }
         
     
-    }
+    // }
 
     void proc_launcher(void (*proc)(void)){
 
