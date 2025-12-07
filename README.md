@@ -58,10 +58,10 @@ Les fonctions des processus sont dans start.c et sont commentées/décommentées
 
 Une fonction affiche_etat(void) a été implémentée et permet de visualiser l'état des processus en cours.
 
-Cependant, celle-ci faisait crasher les tests (car devait gêner le test de l'affichage du timer).
+Cependant, celle-ci faisait crasher les tests du dépôt (car devait gêner le test de l'affichage du timer).
 
-Ainsi, cette fonction a été commentée. 
+Ainsi, l'appel de cette fonction a été commenté. 
 
-Il est possible de la décommenter dans processus.c, processus.h et dans son appel à la fin de la fonction ordonnancement().
+Il est possible de decommenter cet appel qui se situe à la fin de la fonction ordonnancement() (ligne 110 de processus.c).
 
 Aprés cela, il est possible de visualiser en haut à gauche de l'écran les processus crées et leur état en temps réel. 
