@@ -46,3 +46,22 @@
 
 ![terminaison_explicite](https://pcs-louising-a1584e.pages.ensimag.fr/terminaison_explicite.svg)
 ![terminaison_implicite](https://pcs-louising-a1584e.pages.ensimag.fr/terminaison_implicite.svg)
+
+# Informations supplémentaires
+L'ensemble du cahier des charges minimal a été traité et réussi, aucune extension n'a été ajoutée. 
+
+Les différentes parties ont été séparées en différents fichier (processus/console/timer).
+
+Les tests sont effectués dans start.c.
+
+Les fonctions des processus sont dans start.c et sont commentées/décommentées en fonction de la partie testée.
+
+Une fonction affiche_etat(void) a été implémentée et permet de visualiser l'état des processus en cours.
+
+Cependant, celle-ci faisait crasher les tests du dépôt (car devait gêner le test de l'affichage du timer).
+
+Ainsi, l'appel de cette fonction a été commenté. 
+
+Il est possible de decommenter cet appel qui se situe à la fin de la fonction ordonnancement() (ligne 110 de processus.c).
+
+Aprés cela, il est possible de visualiser en haut à gauche de l'écran les processus crées et leur état en temps réel. 
