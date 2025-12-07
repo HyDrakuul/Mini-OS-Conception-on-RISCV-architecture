@@ -218,11 +218,11 @@
     }
 
     void proc_launcher(void (*proc)(void)){
-        //idle ne doit jamais se terminer
-        if(proc != idle){
+
+        
         proc();
 
         fin_processus();
-    }
+    
 
     }
